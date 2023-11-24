@@ -113,24 +113,6 @@ void testPlatform(Platform& platform) {
     testWater(platform, XtbForce::GFNFF);
 }
 
-#include "xtb.h"
-
-int main2() {
-    xtb_TEnvironment env = xtb_newEnvironment();
-    xtb_TCalculator calc = xtb_newCalculator();
-    xtb_TResults res = xtb_newResults();
-    xtb_setVerbosity(env, XTB_VERBOSITY_MUTED);
-    int atoms = 2;
-    double charge = 0;
-    int multiplicity = 1;
-    int numbers[] = {1, 1};
-    double positions[] = {0, 0, 0, 1.9, 0, 0};
-    xtb_TMolecule mol = xtb_newMolecule(env, &atoms, numbers, positions, &charge, &multiplicity, NULL, NULL);
-    xtb_loadGFNFF(env, mol, calc, NULL);
-    xtb_singlepoint(env, mol, calc, res);
-    return 0;
-}
-
 int main() {
     try {
         Platform::loadPluginsFromDirectory(Platform::getDefaultPluginsDirectory());

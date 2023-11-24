@@ -9,7 +9,7 @@ class TestXtbForce(unittest.TestCase):
     def testForce(self):
         # Create a XtbForce and check its fields.
 
-        force = XtbForce(XtbForce.GFNFF, 0.0, 1, False, [0, 1, 2], [8, 1, 1]);
+        force = XtbForce(XtbForce.GFNFF, 0.0, 1, False, [0, 1, 2], [8, 1, 1])
         self.assertEqual(XtbForce.GFNFF, force.getMethod())
         self.assertEqual(0.0, force.getCharge())
         self.assertEqual(1, force.getMultiplicity())
