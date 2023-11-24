@@ -6,7 +6,7 @@
  * Biological Structures at Stanford, funded under the NIH Roadmap for        *
  * Medical Research, grant U54 GM072970. See https://simtk.org.               *
  *                                                                            *
- * Portions copyright (c) 2016 Stanford University and the Authors.           *
+ * Portions copyright (c) 2023 Stanford University and the Authors.           *
  * Authors: Peter Eastman                                                     *
  * Contributors:                                                              *
  *                                                                            *
@@ -45,29 +45,23 @@ extern "C" void registerXtbSerializationProxies();
 void testSerialization() {
     // Create a Force.
 
-//    string script = "d: DISTANCE ATOMS=1,3\n"
-//                    "BIASVALUE ARG=d";
-//    bool restart = true;
-//    double temperature = 42.0;
-//    const std::vector<double> masses = {3.1, 4.1, 5.9};
-//    XtbForce force(script);
-//    force.setRestart(restart);
-//    force.setTemperature(temperature);
-//    force.setMasses(masses);
-//
-//    // Serialize and then deserialize it.
-//
-//    stringstream buffer;
-//    XmlSerializer::serialize<XtbForce>(&force, "Force", buffer);
-//    XtbForce* copy = XmlSerializer::deserialize<XtbForce>(buffer);
-//
-//    // Compare the two forces to see if they are identical.
-//
-//    XtbForce& force2 = *copy;
-//    ASSERT_EQUAL(script, force2.getScript());
-//    ASSERT_EQUAL(restart, force2.getRestart());
-//    ASSERT_EQUAL(temperature, force2.getTemperature());
-//    ASSERT_EQUAL_CONTAINERS(masses, force2.getMasses());
+    XtbForce force(XtbForce::GFN2xTB, 1.0, 3, true, {0, 1, 2}, {8, 1, 1});
+
+    // Serialize and then deserialize it.
+
+    stringstream buffer;
+    XmlSerializer::serialize<XtbForce>(&force, "Force", buffer);
+    XtbForce* copy = XmlSerializer::deserialize<XtbForce>(buffer);
+
+    // Compare the two forces to see if they are identical.
+
+    XtbForce& force2 = *copy;
+    ASSERT_EQUAL(force.getMethod(), force2.getMethod());
+    ASSERT_EQUAL(force.getCharge(), force2.getCharge());
+    ASSERT_EQUAL(force.getMultiplicity(), force2.getMultiplicity());
+    ASSERT_EQUAL(force.usesPeriodicBoundaryConditions(), force2.usesPeriodicBoundaryConditions());
+    ASSERT_EQUAL_CONTAINERS(force.getParticleIndices(), force2.getParticleIndices());
+    ASSERT_EQUAL_CONTAINERS(force.getAtomicNumbers(), force2.getAtomicNumbers());
 }
 
 int main() {
