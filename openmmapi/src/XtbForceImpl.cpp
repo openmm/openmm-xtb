@@ -76,10 +76,11 @@ double XtbForceImpl::computeForce(ContextImpl& context, const vector<Vec3>& posi
 
     // Pass the current state to XTB.
 
-    for (int i = 0; i < positions.size(); i++) {
-        positionVec[3*i] = distanceScale*positions[i][0];
-        positionVec[3*i+1] = distanceScale*positions[i][1];
-        positionVec[3*i+2] = distanceScale*positions[i][2];
+    int numParticles = indices.size();
+    for (int i = 0; i < numParticles; i++) {
+        positionVec[3*i] = distanceScale*positions[indices[i]][0];
+        positionVec[3*i+1] = distanceScale*positions[indices[i]][1];
+        positionVec[3*i+2] = distanceScale*positions[indices[i]][2];
     }
     Vec3 box[3];
     context.getPeriodicBoxVectors(box[0], box[1], box[2]);
@@ -91,7 +92,6 @@ double XtbForceImpl::computeForce(ContextImpl& context, const vector<Vec3>& posi
         xtb_updateMolecule(env, mol, positionVec.data(), boxVectors);
     else {
         bool periodic[3] = {owner.usesPeriodicBoundaryConditions(), owner.usesPeriodicBoundaryConditions(), owner.usesPeriodicBoundaryConditions()};
-        int numParticles = indices.size();
         mol = xtb_newMolecule(env, &numParticles, numbers.data(), positionVec.data(), &charge, &multiplicity, boxVectors, periodic);
         checkErrors();
         if (owner.getMethod() == XtbForce::GFN1xTB)
@@ -113,7 +113,9 @@ double XtbForceImpl::computeForce(ContextImpl& context, const vector<Vec3>& posi
     checkErrors();
     xtb_getGradient(env, res, forceVec.data());
     for (int i = 0; i < positions.size(); i++)
-        forces[i] = -forceScale*Vec3(forceVec[3*i], forceVec[3*i+1], forceVec[3*i+2]);
+        forces[i] = Vec3();
+    for (int i = 0; i < numParticles; i++)
+        forces[indices[i]] = -forceScale*Vec3(forceVec[3*i], forceVec[3*i+1], forceVec[3*i+2]);
     return energyScale*energy;
 }
 
