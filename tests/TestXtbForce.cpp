@@ -107,10 +107,39 @@ void testWater(Platform& platform, XtbForce::Method method) {
     ASSERT_EQUAL_TOL(norm, (state2.getPotentialEnergy()-state3.getPotentialEnergy())/stepSize, 5e-3);
 }
 
+void testPartialSystem(Platform& platform) {
+    // Create a system that is only partly calculated with XTB.
+
+    System system;
+    vector<Vec3> positions(4);
+    for (int i = 0; i < 4; i++) {
+        system.addParticle(1.0);
+        positions[i] = Vec3(0.02*i, 0, 0);
+    }
+    XtbForce* force = new XtbForce(XtbForce::GFNFF, 0.0, 1, false, {0, 3}, {1, 1});
+    system.addForce(force);
+    LangevinMiddleIntegrator integrator(300.0, 1.0, 0.001);
+    Context context(system, integrator, platform);
+    context.setPositions(positions);
+
+    // Check that the two hydrogens repel each other, and the other two particles have no force.
+
+    State state = context.getState(State::Forces);
+    const vector<Vec3>& forces = state.getForces();
+    ASSERT_EQUAL_VEC(forces[0], -forces[3], 1e-5);
+    ASSERT(forces[0][0] < 0);
+    ASSERT_EQUAL_TOL(0.0, forces[0][1], 1e-5);
+    ASSERT_EQUAL_TOL(0.0, forces[0][2], 1e-5);
+    Vec3 zero;
+    ASSERT_EQUAL_VEC(zero, forces[1], 1e-5);
+    ASSERT_EQUAL_VEC(zero, forces[2], 1e-5);
+}
+
 void testPlatform(Platform& platform) {
     testWater(platform, XtbForce::GFN1xTB);
     testWater(platform, XtbForce::GFN2xTB);
     testWater(platform, XtbForce::GFNFF);
+    testPartialSystem(platform);
 }
 
 int main() {
