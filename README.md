@@ -6,8 +6,17 @@ It lets you compute forces and energies with the semi-empirical quantum chemistr
 
 This plugin requires XTB and OpenMM 8.1 or later.
 
-Building The Plugin
-===================
+Installation
+============
+
+The easiest way to install this package along with all dependencies is with the conda or mamba package manager.
+
+```
+mamba install -c conda-forge openmm-xtb
+```
+
+Building From Source
+====================
 
 This project uses [CMake](http://www.cmake.org) for its build system.  To build it, follow these
 steps:
@@ -42,10 +51,20 @@ Simply create a `XtbForce` object and add it to your `System`.  For example,
 
 ```Python
 from openmmxtb import XtbForce
-system.addForce(XtbForce(XtbForce.GFN2xTB, charge, multiplicity, False, particleIndices, atomicNumbers))
+system.addForce(XtbForce(XtbForce.GFN2xTB, charge, multiplicity, periodic, particleIndices, atomicNumbers))
 ```
 
-The currently supported methods are `GFN1xTB`, `GFN2xTB`, and `GFNFF`.
+The arguments are as follows.
+
+- `method`: the method to use for computing forces and energy.  The currently supported options are `GFN1xTB`, `GFN2xTB`, and `GFNFF`.
+- `charge`: the total charge of the system
+- `multiplicity`: the spin multiplicity
+- `periodic`: whether to apply periodic boundary conditions
+- `particleIndices`: a list containing the indices of the particles within the System to which the force should be applied.
+   This allows you to use XTB for only part of the full system.
+- `atomicNumbers`: a list containing the atomic numbers of the particles to which the force should be applied.  This must
+   have the same length as `particleIndices`.  Element `i` is the atomic number of the particle specified by element
+  `i` of `particleIndices`.
 
 License
 =======
