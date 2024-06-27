@@ -51,7 +51,7 @@ Simply create a `XtbForce` object and add it to your `System`.  For example,
 
 ```Python
 from openmmxtb import XtbForce
-system.addForce(XtbForce(XtbForce.GFN2xTB, charge, multiplicity, periodic, particleIndices, atomicNumbers))
+system.addForce(XtbForce(XtbForce.GFN2xTB, 0.0, 1, False, particleIndices, atomicNumbers))
 ```
 
 The arguments are as follows.
