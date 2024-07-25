@@ -15,7 +15,7 @@ if platform.system() == 'Darwin':
     extra_compile_args += ['-stdlib=libc++', '-mmacosx-version-min=10.7']
     extra_link_args += ['-stdlib=libc++', '-mmacosx-version-min=10.7', '-Wl', '-rpath', openmm_dir+'/lib']
 
-extension = Extension(name='_openmmxtb',
+extension = Extension(name='openmmxtb._openmmxtb',
                       sources=['XtbPluginWrapper.cpp'],
                       libraries=['OpenMM', 'OpenMMXTB'],
                       include_dirs=[os.path.join(openmm_dir, 'include'), openmmxtb_header_dir],
@@ -26,6 +26,10 @@ extension = Extension(name='_openmmxtb',
 
 setup(name='OpenMMXTB',
       version='0.1',
-      py_modules=['openmmxtb'],
+      packages=['openmmxtb'],
       ext_modules=[extension],
+      package_data = {"openmmxtb" : ['forcefields/xtb/*.xml']},
+      entry_points={
+          'openmm.forcefielddir' : ['forcefields = openmmxtb:_get_forcefield_dir']
+      },
      )
