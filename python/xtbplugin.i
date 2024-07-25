@@ -38,6 +38,19 @@ public:
     void setAtomicNumbers(const std::vector<int>& numbers);
     bool usesPeriodicBoundaryConditions() const;
     void setUsesPeriodicBoundaryConditions(bool periodic);
+
+    /*
+     * Add methods for casting a Force to a XtbForce.
+    */
+    %extend {
+        static XtbPlugin::XtbForce& cast(OpenMM::Force& force) {
+            return dynamic_cast<XtbPlugin::XtbForce&>(force);
+        }
+
+        static bool isinstance(OpenMM::Force& force) {
+            return (dynamic_cast<XtbPlugin::XtbForce*>(&force) != NULL);
+        }
+    }
 };
 
 }
