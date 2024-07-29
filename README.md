@@ -47,7 +47,15 @@ install the Python wrapper.
 Using The Plugin
 ================
 
-Simply create a `XtbForce` object and add it to your `System`.  For example,
+The plugin can be used in two ways: by directly creating a force and adding it to your `System`,
+or by using a `ForceField`.
+
+Creating a Force Directly
+-------------------------
+
+This is the most general and flexible approach, giving complete control over all aspects.  For example, you can use
+XTB to compute forces on some parts of the system but a classical force field to compute the forces on other parts.
+To use this method, simply create a `XtbForce` object and add it to your `System`.  For example,
 
 ```Python
 from openmmxtb import XtbForce
@@ -66,10 +74,24 @@ The arguments are as follows.
    have the same length as `particleIndices`.  Element `i` is the atomic number of the particle specified by element
   `i` of `particleIndices`.
 
+Using a ForceField
+------------------
+
+The above method requires you to create the `System` yourself, add particles to it, and build the lists of particle indices
+and atomic numbers.  In simple cases where you want to use XTB as the only force for the entire system, it can be easier
+to let a `ForceField` create the `System` for you.
+
+```python
+ff = app.ForceField('xtb/gfn2xtb.xml')
+system = ff.createSystem(topology, charge=2, multiplicity=1, periodic=False)
+```
+
+The plugin provides three force field files for the available methods: `'xtb/gfn1xtb.xml'`, `'xtb/gfn2xtb.xml'` and `'xtb/gfnff.xml'`.
+
 License
 =======
 
-Portions copyright (c) 2023 Stanford University and the Authors.
+Portions copyright (c) 2023-2024 Stanford University and the Authors.
 
 Authors: Peter Eastman
 

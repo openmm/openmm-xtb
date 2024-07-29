@@ -1,0 +1,30 @@
+<ForceField>
+ <InitializationScript>
+def xtbTemplateGenerator(forcefield, residue):
+    from openmm.app.forcefield import _createResidueTemplate
+    template = _createResidueTemplate(residue)
+    from uuid import uuid4
+    template.name = f'{residue.name}-{uuid4()}'
+    for (template_atom, residue_atom) in zip(template.atoms, residue.atoms()):
+        element = residue_atom.element
+        type_name = f'xtb_{element.symbol}'
+        template_atom.type = type_name
+        if type_name not in forcefield._atomTypes:
+            forcefield.registerAtomType({'name': type_name, 'class': type_name, 'mass': element.mass, 'element': element})
+    forcefield.registerResidueTemplate(template)
+    return True
+
+self.registerTemplateGenerator(xtbTemplateGenerator)
+ </InitializationScript>
+ <Script>
+from openmmxtb import XtbForce
+indices = list(range(sys.getNumParticles()))
+numbers = [atom.element.atomic_number for atom in topology.atoms()]
+if 'periodic' in args:
+    periodic = args['periodic']
+else:
+    periodic = topology.getUnitCellDimensions() is not None
+force = XtbForce(XtbForce.GFN1xTB, args['charge'], args['multiplicity'], periodic, indices, numbers)
+sys.addForce(force)
+ </Script>
+</ForceField>

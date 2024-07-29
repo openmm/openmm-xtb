@@ -1,4 +1,5 @@
 import openmm as mm
+import openmm.app as app
 import openmm.unit as unit
 from openmmxtb import XtbForce
 import unittest
@@ -32,6 +33,26 @@ class TestXtbForce(unittest.TestCase):
         state = context.getState(getEnergy=True, getForces=True)
         self.assertAlmostEqual(-859.209, state.getPotentialEnergy().value_in_unit(unit.kilojoules_per_mole), places=3)
 
+    def testForceFields(self):
+        """Test using a ForceField to create an XtbForce."""
+        pdb = app.PDBFile('alanine-dipeptide.pdb')
+        top = pdb.topology
+        tests = [
+            ('gfnff.xml', XtbForce.GFNFF, 0, 1, False),
+            ('gfn1xtb.xml', XtbForce.GFN1xTB, 1, 3, False),
+            ('gfn2xtb.xml', XtbForce.GFN2xTB, 0, 1, True)
+        ]
+        for forcefield, method, charge, multiplicity, periodic in tests:
+            ff = app.ForceField(f'xtb/{forcefield}')
+            system = ff.createSystem(top, charge=charge, multiplicity=multiplicity, periodic=periodic)
+            xtb = [f for f in system.getForces() if XtbForce.isinstance(f)]
+            self.assertEqual(1, len(xtb))
+            force = XtbForce.cast(xtb[0])
+            self.assertEqual(method, force.getMethod())
+            self.assertEqual(charge, force.getCharge())
+            self.assertEqual(multiplicity, force.getMultiplicity())
+            self.assertEqual(tuple(range(top.getNumAtoms())), force.getParticleIndices())
+            self.assertEqual(tuple(a.element.atomic_number for a in top.atoms()), force.getAtomicNumbers())
 
 if __name__ == '__main__':
     unittest.main()
