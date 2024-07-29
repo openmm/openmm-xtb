@@ -34,7 +34,7 @@ jobs:
             CMAKE_FLAGS: ""
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
 #      - name: "Patch conda env (if needed)"
 #        if: startsWith(matrix.os, 'ubuntu')
