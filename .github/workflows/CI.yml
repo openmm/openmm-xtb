@@ -92,8 +92,6 @@ jobs:
         shell: bash -l {0}
         run: |
           python -c "import simtk.openmm as mm; print('---Loaded---', *mm.pluginLoadedLibNames, '---Failed---', *mm.Platform.getPluginLoadFailures(), sep='\n')"
-          python -c "from openmm.app import *; print(forcefield._getDataDirectories())"
-          python -c "from importlib.metadata import entry_points; print(entry_points().select(group='openmm.forcefielddir'))"
 
       - name: "Test C++"
         shell: bash -l {0}
