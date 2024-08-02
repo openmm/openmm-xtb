@@ -14,5 +14,6 @@ dependencies:
 - xtb
 - khronos-opencl-icd-loader
 - pocl
+- importlib_metadata
 # test
 - pytest
