@@ -20,5 +20,6 @@ dependencies:
 - xtb
 - ocl-icd
 - pocl
+- importlib_metadata
 # test
 - pytest
