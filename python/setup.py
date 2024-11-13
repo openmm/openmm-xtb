@@ -25,7 +25,7 @@ extension = Extension(name='openmmxtb._openmmxtb',
                      )
 
 setup(name='OpenMMXTB',
-      version='0.1',
+      version='0.2',
       packages=['openmmxtb'],
       ext_modules=[extension],
       package_data = {"openmmxtb" : ['forcefields/xtb/*.xml']},
